@@ -42,7 +42,7 @@ export class OrderService {
     const confirmedOrder = await this.repo
       .findById(order._id)
       .exec();
-      confirmedOrder.state=`Order confirmed` 
+      confirmedOrder.state=`Order delivered` 
     return confirmedOrder.save();
   }
 
