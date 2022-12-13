@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Order } from './interfaces/order.interface';
@@ -33,7 +33,12 @@ export class OrderService {
     const canceledOrder = await this.repo
       .findById(orderID)
       .exec();
+      if(canceledOrder.state=`Order delivered`) {
+        throw new NotFoundException('Order already delivered, cannot cancel!');
+      }
+      else {
       canceledOrder.state=`Order canceled`
+      }
     return canceledOrder.save();
   }
 
