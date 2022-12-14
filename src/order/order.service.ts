@@ -33,8 +33,8 @@ export class OrderService {
     const canceledOrder = await this.repo
       .findById(orderID)
       .exec();
-      if(canceledOrder.state==`Order delivered` || canceledOrder.state==`Order declined`) {
-        throw new NotFoundException('Order already processed, cannot cancel!');
+      if(canceledOrder.state==`Order delivered`) {
+        throw new NotFoundException('Order already delivered, cannot cancel!');
       }
       canceledOrder.state=`Order canceled`
     return canceledOrder.save();
