@@ -36,9 +36,7 @@ export class OrderService {
       if(canceledOrder.state=`Order delivered`) {
         throw new NotFoundException('Order already delivered, cannot cancel!');
       }
-      else {
       canceledOrder.state=`Order canceled`
-      }
     return canceledOrder.save();
   }
 
@@ -46,7 +44,6 @@ export class OrderService {
     const confirmedOrder = await this.repo
       .findById(order._id)
       .exec();
-      confirmedOrder.state=`Order delivered` 
     return confirmedOrder.save();
   }
 
