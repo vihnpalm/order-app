@@ -7,7 +7,7 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
     
 @Module({
     imports: [
-        MongooseModule.forRoot('mongodb://127.0.0.1:27017', {useNewUrlParser: true}),
+        MongooseModule.forRoot('mongodb://localhost:27017', {useNewUrlParser: true}),
         MongooseModule.forFeature([{ name: 'Order', schema: OrderSchema }]),
         ClientsModule.register([
           {
