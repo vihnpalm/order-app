@@ -25,7 +25,7 @@ export class OrderService {
 
   async cancelOrder(orderID: string): Promise<Order> {
     const canceledOrder = await this.repo.findById(orderID).exec();
-    if(canceledOrder.state==`Order delivered`) throw new ForbiddenException('Order is delivered, cannot cancel!');
+    if(canceledOrder.state==`Order delivered` ||canceledOrder.state==`Order canceled`) throw new ForbiddenException('Order already processed, cannot cancel!');
     canceledOrder.state=`Order canceled`
     return canceledOrder.save();
   }
