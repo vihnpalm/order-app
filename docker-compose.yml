@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  order:
+    build:
+      context: .
+    network_mode: host
+    ports:
+      - 5000:5000
+      - 3000:3000
+    volumes:
+      - ./:/app
+    command: npm run start:dev
+  mongodb:
+    image: mongo:latest
+    network_mode: host
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodatabase:/data/db
+
+volumes:
+  mongodatabase:

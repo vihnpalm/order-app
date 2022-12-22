@@ -1,4 +1,4 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Order } from './interfaces/order.interface';
@@ -15,42 +15,29 @@ export class OrderService {
   createOrder(order: CreateOrderDTO): Promise<Order> {
     order.state=`Order created`
     const newOrder = new this.repo(order);
-    this.statusClient.emit(
-      'order_created',
-      newOrder
-    )
+    this.statusClient.emit('order_created',newOrder)
     return newOrder.save();
   }
 
-  async checkOrder(orderID: string): Promise<Order> {
-    const order = await this.repo
-      .findById(orderID)
-      .exec();
-    return order;
+  checkOrder(id: string): Promise<Order> {
+    return this.repo.findById(id).exec();;
   }
 
   async cancelOrder(orderID: string): Promise<Order> {
-    const canceledOrder = await this.repo
-      .findById(orderID)
-      .exec();
-      if(canceledOrder.state==`Order delivered`) {
-        throw new NotFoundException('Order already delivered, cannot cancel!');
-      }
-      canceledOrder.state=`Order canceled`
+    const canceledOrder = await this.repo.findById(orderID).exec();
+    if(canceledOrder.state==`Order delivered`) throw new ForbiddenException('Order is delivered, cannot cancel!');
+    canceledOrder.state=`Order canceled`
     return canceledOrder.save();
   }
 
   async confirmOrder(order: CreateOrderDTO): Promise<Order> {
-    const confirmedOrder = await this.repo
-      .findById(order._id)
-      .exec();
+    const confirmedOrder = await this.repo.findById(order._id).exec();
+      confirmedOrder.state=`Order delivered`
     return confirmedOrder.save();
   }
 
   async declineOrder(order: CreateOrderDTO): Promise<Order> {
-    const declinedOrder = await this.repo
-      .findById(order._id)
-      .exec();
+    const declinedOrder = await this.repo.findById(order._id).exec();
       declinedOrder.state=`Order declined` 
     return declinedOrder.save();
   }

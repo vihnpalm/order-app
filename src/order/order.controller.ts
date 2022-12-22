@@ -3,6 +3,7 @@ import { OrderService } from './order.service';
 import { CreateOrderDTO } from './dtos/create-order.dto';
 import { ValidateObjectId } from './shared/pipes/validate-object-id.pipes';
 import { EventPattern } from '@nestjs/microservices';
+import { Order } from './interfaces/order.interface';
     
 @Controller('order')
 export class OrderController {
@@ -11,45 +12,29 @@ export class OrderController {
     
   // Create an order
   @Post('/create')
-  createOrder(@Body() body: CreateOrderDTO) {
+  createOrder(@Body() body: CreateOrderDTO): Promise<Order> {
     return this.orderService.createOrder(body)
   }
     
   // Check a particular order status using ID
-  @Get('check/:orderID')
-  async checkOrder(@Param('orderID', new ValidateObjectId()) orderID: string) {
-    const order = await this.orderService.checkOrder(orderID);
-    if (!order) {
-        throw new NotFoundException('Order does not exist!');
-    }
-    return order.state;
+  @Get('check/:id')
+  checkOrder(@Param('id', new ValidateObjectId()) orderID: string) {
+    return this.orderService.checkOrder(orderID);
   }
     
   // Cancel an order using ID
-  @Put('cancel/:orderID')
-  async cancelOrder(@Param('orderID', new ValidateObjectId()) orderID: string) {
-    const canceledOrder = await this.orderService.cancelOrder(orderID);
-    if (!canceledOrder) {
-        throw new NotFoundException('Order does not exist!');
-    }
-    return canceledOrder;
+  @Put('cancel/:id')
+  async cancelOrder(@Param('id', new ValidateObjectId()) orderID: string) {
+    return this.orderService.cancelOrder(orderID);
   }
 
   @EventPattern('order_confirmed')
-  async confirmOrder(order: CreateOrderDTO) {
-    const confirmedOrder = await this.orderService.confirmOrder(order);
-    if (!confirmedOrder) {
-        throw new NotFoundException('Order does not exist!');
-    }
-    return confirmedOrder;
+  confirmOrder(order: CreateOrderDTO) {
+    return this.orderService.confirmOrder(order);
   }
 
   @EventPattern('order_declined')
-  async declineOrder(order: CreateOrderDTO) {
-    const declinedOrder = await this.orderService.declineOrder(order);
-    if (!declinedOrder) {
-        throw new NotFoundException('Order does not exist!');
-    }
-    return declinedOrder;
+  declineOrder(order: CreateOrderDTO) {
+    return this.orderService.declineOrder(order);
   }
 }
