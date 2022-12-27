@@ -1,20 +1,23 @@
 import { IsNumber, IsString } from 'class-validator';
 
-export class CreateOrderDTO {
+export class ExistedOrderDTO {
   @IsString()
-  product: string;
+  productToken: string; // token given per request to purchase
 
   @IsString()
   address: string;
 
   @IsString()
-  productToken: string; // token given per request to purchase
+  product: string;
 
   @IsNumber()
   card: number; //payment card
 
   @IsNumber()
   amount: number;
+
+  @IsString()
+  _id: string;
 
   @IsString()
   state: string; // order state

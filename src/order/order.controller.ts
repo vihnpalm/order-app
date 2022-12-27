@@ -3,7 +3,7 @@ import { OrderService } from './order.service';
 import { CreateOrderDTO } from './dtos/create-order.dto';
 import { ValidateObjectId } from './shared/pipes/validate-object-id.pipes';
 import { EventPattern } from '@nestjs/microservices';
-import { Order } from './interfaces/order.interface';
+import { OrderInterface } from './interfaces/order.interface';
     
 @Controller('order')
 export class OrderController {
@@ -12,29 +12,29 @@ export class OrderController {
     
   // Create an order
   @Post('/create')
-  createOrder(@Body() body: CreateOrderDTO): Promise<Order> {
-    return this.orderService.createOrder(body)
+  createOrder(@Body() body: CreateOrderDTO): Promise<OrderInterface> {
+    return this.orderService.create(body)
   }
     
   // Check a particular order status using ID
   @Get('check/:id')
-  checkOrder(@Param('id', new ValidateObjectId()) orderID: string) {
-    return this.orderService.checkOrder(orderID);
+  checkOrder(@Param('id', new ValidateObjectId()) id: string) {
+    return this.orderService.check(id);
   }
     
   // Cancel an order using ID
   @Put('cancel/:id')
-  async cancelOrder(@Param('id', new ValidateObjectId()) orderID: string) {
-    return this.orderService.cancelOrder(orderID);
+  cancelOrder(@Param('id', new ValidateObjectId()) id: string) {
+    return this.orderService.cancel(id);
   }
 
   @EventPattern('order_confirmed')
-  confirmOrder(order: CreateOrderDTO) {
-    return this.orderService.confirmOrder(order);
+  confirmOrder(id: string) {
+    return this.orderService.confirm(id);
   }
 
   @EventPattern('order_declined')
-  declineOrder(order: CreateOrderDTO) {
-    return this.orderService.declineOrder(order);
+  declineOrder(id: string) {
+    return this.orderService.decline(id);
   }
 }
